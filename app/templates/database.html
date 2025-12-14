@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Viewer - Task 2</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🗄️ Database Viewer</h1>
+            <nav>
+                <a href="{{ url_for('home') }}">Home</a>
+            </nav>
+        </header>
+        
+        <main>
+            <div class="tables-section">
+                <h2>Available Tables</h2>
+                <div id="tables-list" class="tables-grid">
+                    <!-- Tables will be loaded here -->
+                </div>
+            </div>
+            
+            <div class="records-section" id="records-section" style="display: none;">
+                <h2 id="table-title">Table Records</h2>
+                <button onclick="closeRecords()" class="btn btn-secondary">Back to Tables</button>
+                <div id="records-container">
+                    <!-- Records will be loaded here -->
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/database.js') }}"></script>
+</body>
+</html>
+
