@@ -1,7 +1,7 @@
 """Database routes for displaying tables and records"""
 from flask import Blueprint, render_template, jsonify, request, flash, redirect, url_for
 from werkzeug.utils import secure_filename
-from models import db, User, Product, PresentationFile, PresentationSlide, SlideUrl
+from models import db, PresentationFile, PresentationSlide, SlideUrl
 from utils.pptx_parser import extract_text_and_urls
 import logging
 import os
@@ -14,6 +14,22 @@ db_bp = Blueprint('database', __name__, url_prefix='/db')
 # Allowed file extensions
 ALLOWED_EXTENSIONS = {'pptx'}
 UPLOAD_FOLDER = '/tmp/uploads'  # Temporary upload folder in container (mounted volume)
+
+# Table model mapping for dynamic query handling
+TABLE_MODELS = {
+    'presentation_files': {
+        'model': PresentationFile,
+        'order_by': lambda m: m.uploaded_at.desc()
+    },
+    'presentation_slides': {
+        'model': PresentationSlide,
+        'order_by': lambda m: m.slide_number
+    },
+    'slide_urls': {
+        'model': SlideUrl,
+        'order_by': None
+    }
+}
 
 @db_bp.route('/')
 def index():
@@ -38,23 +54,19 @@ def list_tables():
 def get_table_data(table_name):
     """Get all records from a specific table"""
     try:
-        if table_name == 'users':
-            records = User.query.all()
-            data = [record.to_dict() for record in records]
-        elif table_name == 'products':
-            records = Product.query.all()
-            data = [record.to_dict() for record in records]
-        elif table_name == 'presentation_files':
-            records = PresentationFile.query.order_by(PresentationFile.uploaded_at.desc()).all()
-            data = [record.to_dict() for record in records]
-        elif table_name == 'presentation_slides':
-            records = PresentationSlide.query.order_by(PresentationSlide.slide_number).all()
-            data = [record.to_dict() for record in records]
-        elif table_name == 'slide_urls':
-            records = SlideUrl.query.all()
-            data = [record.to_dict() for record in records]
-        else:
+        if table_name not in TABLE_MODELS:
             return jsonify({'error': f'Table {table_name} not found'}), 404
+        
+        table_config = TABLE_MODELS[table_name]
+        model = table_config['model']
+        order_by = table_config['order_by']
+        
+        query = model.query
+        if order_by:
+            query = query.order_by(order_by(model))
+        
+        records = query.all()
+        data = [record.to_dict() for record in records]
         
         return jsonify({
             'table': table_name,
@@ -69,18 +81,11 @@ def get_table_data(table_name):
 def get_record(table_name, record_id):
     """Get a specific record by ID"""
     try:
-        if table_name == 'users':
-            record = User.query.get_or_404(record_id)
-        elif table_name == 'products':
-            record = Product.query.get_or_404(record_id)
-        elif table_name == 'presentation_files':
-            record = PresentationFile.query.get_or_404(record_id)
-        elif table_name == 'presentation_slides':
-            record = PresentationSlide.query.get_or_404(record_id)
-        elif table_name == 'slide_urls':
-            record = SlideUrl.query.get_or_404(record_id)
-        else:
+        if table_name not in TABLE_MODELS:
             return jsonify({'error': f'Table {table_name} not found'}), 404
+        
+        model = TABLE_MODELS[table_name]['model']
+        record = model.query.get_or_404(record_id)
         
         return jsonify({
             'table': table_name,
