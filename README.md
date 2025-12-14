@@ -232,6 +232,14 @@ APP_PORT=5000
 - Click on "Slide URLs" to see all extracted URLs (all clickable!)
 - URLs open in new tabs when clicked
 
+## Documentation
+
+Additional documentation is available in the [`docs/`](docs/) directory:
+
+- **[ARCHITECTURE.md](docs/ARCHITECTURE.md)** - Comprehensive architecture documentation covering all critical components, data flow, and system design
+- **[LOCAL_SETUP.md](docs/LOCAL_SETUP.md)** - Guide for running the application locally without Docker
+- **[SECURITY.md](docs/SECURITY.md)** - Security best practices and what never to commit to git
+
 ## Next Steps
 
 - Add search/filter functionality
