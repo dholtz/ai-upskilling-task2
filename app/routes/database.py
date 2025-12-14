@@ -276,25 +276,23 @@ def delete_file_data(file_id):
     try:
         presentation_file = PresentationFile.query.get_or_404(file_id)
         
-        # Count what will be deleted
-        slide_count = presentation_file.slide_count
-        url_count = presentation_file.url_count
+        # Count what will be deleted (get actual counts from relationships)
+        slide_count = len(presentation_file.slides)
+        url_count = sum(len(slide.urls) for slide in presentation_file.slides)
         
-        # Delete all URLs for slides in this file
-        slide_ids = [slide.id for slide in presentation_file.slides]
-        SlideUrl.query.filter(SlideUrl.slide_id.in_(slide_ids)).delete()
+        # Store filenames for logging before deletion
+        filename = presentation_file.original_filename
+        filepath = presentation_file.filename
         
-        # Delete all slides for this file
-        PresentationSlide.query.filter_by(file_id=file_id).delete()
-        
-        # Delete the file record
+        # Delete the file record - this will cascade delete all related slides and URLs
+        # due to the cascade='all, delete-orphan' relationship defined in the model
         db.session.delete(presentation_file)
         db.session.commit()
         
-        logger.info(f"Deleted file {presentation_file.filename}: {slide_count} slides and {url_count} URLs removed")
+        logger.info(f"Deleted file {filepath}: {slide_count} slides and {url_count} URLs removed")
         
         return jsonify({
-            'message': f'File "{presentation_file.original_filename}" deleted successfully',
+            'message': f'File "{filename}" deleted successfully',
             'slides_deleted': slide_count,
             'urls_deleted': url_count
         }), 200
