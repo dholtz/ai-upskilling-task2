@@ -19,6 +19,14 @@ Flask application with PostgreSQL database integration. This project demonstrate
 
 ### Running with Docker Compose
 
+**Using Make (Recommended):**
+```bash
+# From the app/ directory
+cd app
+make compose-up-build
+```
+
+**Or manually:**
 ```bash
 # From the task2-db-app directory
 docker-compose up --build
@@ -41,13 +49,28 @@ This will:
 
 ### Stopping the Containers
 
+**Using Make:**
 ```bash
-docker-compose down
+make compose-down          # Stop containers
+make compose-down-volumes  # Stop and clear database
 ```
 
-To also remove the database volume (clears all data):
+**Or manually:**
 ```bash
-docker-compose down -v
+docker-compose down        # Stop containers
+docker-compose down -v     # Stop and clear database
+```
+
+### Other Useful Commands
+
+```bash
+make compose-logs          # View all logs
+make compose-logs-app      # View app logs only
+make compose-logs-db       # View database logs only
+make compose-ps            # Show container status
+make compose-restart       # Restart containers
+make compose-shell-app     # Open shell in app container
+make compose-shell-db      # Open PostgreSQL shell
 ```
 
 ## Database Tables

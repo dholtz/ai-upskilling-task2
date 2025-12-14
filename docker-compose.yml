@@ -40,11 +40,17 @@ services:
     networks:
       - app-network
     volumes:
+      # Corporate CA certificate (adjust path as needed for your environment)
+      # Note: Certificate file should be in parent directory or adjust path accordingly
       - ../Zscaler_Root_CA.cer:/tmp/cert.cer:ro
+      # Mount app code for hot-reload (development)
+      - ./app:/app
+      # Mount uploads directory
+      - ./uploads:/tmp/uploads
     entrypoint: >
       sh -c "sleep 5 &&
              python scripts/init_db.py &&
-             gunicorn --bind 0.0.0.0:5000 app:app"
+             gunicorn --bind 0.0.0.0:5000 --reload app:app"
 
 volumes:
   postgres_data:

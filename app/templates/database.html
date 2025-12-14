@@ -16,6 +16,32 @@
         </header>
         
         <main>
+            <div class="upload-section">
+                <div class="card">
+                    <h2>📄 Upload PowerPoint File(s)</h2>
+                    <p>Upload one or more .pptx files to extract text and URLs</p>
+                    <form id="upload-form" enctype="multipart/form-data">
+                        <input type="file" id="pptx-file" name="file" accept=".pptx" multiple>
+                        <button type="submit" class="btn btn-primary">Upload & Parse</button>
+                    </form>
+                    <div id="upload-status"></div>
+                </div>
+                
+                <div class="card" style="margin-top: 20px;">
+                    <h2>📁 Uploaded Files</h2>
+                    <div id="files-list">
+                        <div class="loading">Loading files...</div>
+                    </div>
+                </div>
+                
+                <div class="card" style="margin-top: 20px;">
+                    <h2>🗑️ Clear Database</h2>
+                    <p>Remove all presentation slides and URLs from the database</p>
+                    <button onclick="clearDatabase()" class="btn btn-secondary" id="clear-btn">Clear All Data</button>
+                    <div id="clear-status" style="margin-top: 10px;"></div>
+                </div>
+            </div>
+            
             <div class="tables-section">
                 <h2>Available Tables</h2>
                 <div id="tables-list" class="tables-grid">

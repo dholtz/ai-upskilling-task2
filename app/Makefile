@@ -1,4 +1,4 @@
-.PHONY: help install run test clean docker-build docker-run docker-stop lint format
+.PHONY: help install run test clean docker-build docker-run docker-stop lint format compose-up compose-down compose-logs
 
 # Variables
 APP_NAME=flask-app
@@ -97,6 +97,54 @@ docker-shell: ## Open shell in running Docker container
 	@docker exec -it $(APP_NAME) /bin/bash
 
 docker-rebuild: docker-stop docker-rm docker-build ## Rebuild Docker image (stops and removes old container first)
+
+# ============================================================================
+# Docker Compose Commands (for multi-container setup)
+# ============================================================================
+
+compose-up: ## Start all containers with docker-compose
+	@echo "$(CYAN)Starting containers with docker-compose...$(NC)"
+	@cd .. && docker-compose up -d
+	@echo "$(GREEN)✓ Containers started$(NC)"
+	@echo "$(YELLOW)View logs: make compose-logs$(NC)"
+
+compose-up-build: ## Build and start all containers
+	@echo "$(CYAN)Building and starting containers...$(NC)"
+	@cd .. && docker-compose up --build -d
+	@echo "$(GREEN)✓ Containers built and started$(NC)"
+
+compose-down: ## Stop and remove all containers
+	@echo "$(CYAN)Stopping containers...$(NC)"
+	@cd .. && docker-compose down
+	@echo "$(GREEN)✓ Containers stopped$(NC)"
+
+compose-down-volumes: ## Stop containers and remove volumes (clears database)
+	@echo "$(CYAN)Stopping containers and removing volumes...$(NC)"
+	@cd .. && docker-compose down -v
+	@echo "$(GREEN)✓ Containers stopped and volumes removed$(NC)"
+
+compose-logs: ## View logs from all containers
+	@cd .. && docker-compose logs -f
+
+compose-logs-app: ## View logs from app container only
+	@cd .. && docker-compose logs -f app
+
+compose-logs-db: ## View logs from database container only
+	@cd .. && docker-compose logs -f db
+
+compose-ps: ## Show status of all containers
+	@cd .. && docker-compose ps
+
+compose-restart: ## Restart all containers
+	@echo "$(CYAN)Restarting containers...$(NC)"
+	@cd .. && docker-compose restart
+	@echo "$(GREEN)✓ Containers restarted$(NC)"
+
+compose-shell-app: ## Open shell in app container
+	@cd .. && docker-compose exec app /bin/bash
+
+compose-shell-db: ## Open PostgreSQL shell in database container
+	@cd .. && docker-compose exec db psql -U $(shell cd .. && docker-compose exec -T db printenv POSTGRES_USER || echo flaskuser) -d $(shell cd .. && docker-compose exec -T db printenv POSTGRES_DB || echo flaskdb)
 
 # ============================================================================
 # Code Quality

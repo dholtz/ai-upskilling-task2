@@ -159,6 +159,11 @@ main {
     background: #5a6268;
 }
 
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
 .loading {
     text-align: center;
     padding: 40px;

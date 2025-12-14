@@ -151,3 +151,7 @@ checkpoints/
 runs/
 outputs/
 
+# Uploads directory (user-uploaded files)
+uploads/
+!uploads/README.md
+

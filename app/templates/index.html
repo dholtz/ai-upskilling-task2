@@ -15,6 +15,12 @@
         
         <main>
             <div class="card">
+                <h2>📄 Upload PowerPoint</h2>
+                <p>Upload a .pptx file to extract text and URLs</p>
+                <a href="{{ url_for('database.upload_pptx') }}" class="btn btn-primary">Upload .pptx File</a>
+            </div>
+            
+            <div class="card">
                 <h2>Database Tables</h2>
                 <p>View and explore database tables and records</p>
                 <a href="{{ url_for('database.index') }}" class="btn btn-primary">View Database</a>
