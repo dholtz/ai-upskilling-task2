@@ -2,6 +2,8 @@
 
 Flask application with PostgreSQL database integration. This project demonstrates deploying two containers (APP and DB) with a web UI to view database tables and records.
 
+> 📖 **For detailed architecture documentation**, see [ARCHITECTURE.md](docs/ARCHITECTURE.md) - This document explains all critical components, data flow, and how the application functions.
+
 ## Features
 
 - ✅ **PostgreSQL Database** - Containerized PostgreSQL 15
